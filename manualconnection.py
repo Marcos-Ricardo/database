@@ -91,7 +91,7 @@ class Connection():
                 print(f'{"Nome: ",self.new_name}\n,{"Idade: ",self.new_old}\n, {"Cidade: ",self.new_city}\n, {"Profissão: ",self.new_ocupation}')
                 insert_user()
                 
-    def inserir(self):
+    def insert_new_user_screnn(self):
         self.root_inserir = tk.Tk()
         self.root_inserir.geometry('435x180')
         
