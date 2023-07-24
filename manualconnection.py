@@ -7,30 +7,29 @@ from tkinter import messagebox
 class Connection():
     def __init__(self):
         self.screen()
-        
-    
+
     def connection(self):
         user = self.user.get()
         password = self.password.get()
         host = self.host.get()
         database = self.database.get()
-
-        self.dblogin = {'user': user,
-                    'password': password,
-                    'host': host,
-                    'database': database    
-                    }
-        try:
-            self.conn = mysql.connector.connect(**self.dblogin)
-            self.cursor = self.conn.cursor()
-            self.query = 'SELECT * FROM clientes;'
-            self.cursor.execute(self.query)
-            self.response = self.cursor.fetchall()
-            
-        except:
-            messagebox.showerror('ERRO', 'Dados de login do banco incorretos\nVerifique e tente novamente')
-            KeyError
-            self.clear_screen()
+        if user and password and host and database != "":     
+            self.dblogin = {'user': user,
+                        'password': password,
+                        'host': host,
+                        'database': database    
+                        }
+            try:
+                self.conn = mysql.connector.connect(**self.dblogin)
+                self.cursor = self.conn.cursor()
+                self.query = 'SELECT * FROM clientes;'
+                self.cursor.execute(self.query)
+                self.response = self.cursor.fetchall()
+            except Exception as e:
+                    self.clear_screen()
+                    messagebox.showerror('ERRO', e)
+        else:
+            messagebox.showerror('MRTEC', 'Preencha todos os campos para prosseguir')       
     
     def clear_screen(self):
             self.user.delete(0, 'end')
@@ -53,7 +52,6 @@ class Connection():
     def clear_screen_db(self):
         self.p_df.delete("1.0", "end")
         
-
     def shutdown(self):
        self.mensagem =  messagebox.askquestion('MRTEC', 'Deseja mesmo encerrar o app?')
        if self.mensagem == 'yes':
@@ -93,7 +91,6 @@ class Connection():
                 print(f'{"Nome: ",self.new_name}\n,{"Idade: ",self.new_old}\n, {"Cidade: ",self.new_city}\n, {"Profissão: ",self.new_ocupation}')
                 insert_user()
                 
-    
     def inserir(self):
         self.root_inserir = tk.Tk()
         self.root_inserir.geometry('435x180')
@@ -145,8 +142,6 @@ class Connection():
         tk.Button(self.root, text='ENCERRAR', command=self.shutdown).place(x=275, y=130)
         tk.Button(self.root, text='INSERIR NOVO CLIENTE', command=self.inserir).place(x=135, y=130)
         tk.Button(self.root, text='LIMPAR DADOS', command=self.clear_screen_db).place(x=403, y=130)
-
-        
 
         self.p_df = tk.Text(self.root)
         self.p_df.pack(pady=50)
