@@ -3,11 +3,39 @@ import mysql.connector
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
+import os
 
 class Connection():
     def __init__(self):
-        self.screen()
+        self.login()
 
+    def login(self):
+        self.login_root = tk.Tk()
+        self.login_root.geometry('380x160+410+200')
+        self.login_root.configure(bg='#C0D9D9')
+        
+        tk.Label(self.login_root, text='Digite o seu usuário do seu banco de dados:', bg='#C0D9D9', fg='black').place(x=10, y=6)
+        self.user = tk.Entry(self.login_root)
+        self.user.place(x=250, y=6)
+
+        tk.Label(self.login_root, text='Digite a senha do seu banco de dados:', bg='#C0D9D9', fg='black').place(x=10, y=35) 
+        self.password = tk.Entry(self.login_root)
+        self.password.place(x=250, y=35)
+
+        tk.Label(self.login_root, text='Digite o host do seu banco de dados:', bg='#C0D9D9', fg='black').place(x=10, y=65)
+        self.host = tk.Entry(self.login_root)
+        self.host.place(x=250, y= 65)
+
+        tk.Label(self.login_root, text='Digite qual banco de dados vai utilizar:', bg='#C0D9D9', fg='black').place(x=10, y=95)
+        self.database = tk.Entry(self.login_root)
+        self.database.place(x=250, y=95)
+
+        tk.Button(self.login_root, text='ENVIAR', command=self.confirm_login).place(x=320, y=130)
+        
+        self.login_root.mainloop()
+    def confirm_login(self):
+        self.connection()
+    
     def connection(self):
         user = self.user.get()
         password = self.password.get()
@@ -25,6 +53,9 @@ class Connection():
                 self.query = 'SELECT * FROM clientes;'
                 self.cursor.execute(self.query)
                 self.response = self.cursor.fetchall()
+                self.login_root.destroy()
+                self.screen()
+                
             except Exception as e:
                     self.clear_screen()
                     messagebox.showerror('ERRO', e)
@@ -42,9 +73,15 @@ class Connection():
         self.df = pd.DataFrame(self.response)
 
     def show_dataframe(self):
+        self.df = pd.DataFrame(self.response)
+        self.query = 'SELECT * FROM clientes;'
+        self.cursor.execute(self.query)
+        self.response = self.cursor.fetchall()
+        self.clear_screen_db()
         self.p_df.insert("1.0", self.df.to_string(index=False))
-        
+    
     def insert_data(self):
+        self.screen()
         self.dataframe()
         self.p_df.insert("1.0", self.df.to_string(index=False))
         self.clear_screen()
@@ -55,10 +92,11 @@ class Connection():
     def shutdown(self):
        self.mensagem =  messagebox.askquestion('MRTEC', 'Deseja mesmo encerrar o app?')
        if self.mensagem == 'yes':
-           self.root.destroy()
-           self.root_inserir.destroy()
            self.conn.close()
            self.cursor.close()
+           os._exit(0)
+           
+           
 
     def save_new_user(self):
             self.new_name = self.ist_name.get()
@@ -93,23 +131,24 @@ class Connection():
                 
     def insert_new_user_screnn(self):
         self.root_inserir = tk.Tk()
-        self.root_inserir.geometry('435x180')
+        self.root_inserir.geometry('340x180+405+30')
+        self.root_inserir.configure(bg='grey')
         
-        tk.Label(self.root_inserir, text='Insira o nome do usuário:').place(x=0.0, y=5)
+        tk.Label(self.root_inserir, text='Insira o nome do usuário:', bg='grey').place(x=0.0, y=5)
         self.ist_name = tk.Entry(self.root_inserir)
-        self.ist_name.pack(pady=5)
+        self.ist_name.place(x=180, y=5)
 
-        tk.Label(self.root_inserir, text='Insira a idade do usuário:').place(x=0.0, y=35)
+        tk.Label(self.root_inserir, text='Insira a idade do usuário:', bg='grey').place(x=0.0, y=35)
         self.ist_old = tk.Entry(self.root_inserir)
-        self.ist_old.pack(pady=5)
+        self.ist_old.place(x=180, y=35)
         
-        tk.Label(self.root_inserir, text='Insira a cidade do usuário:').place(x=0.0, y=65)
+        tk.Label(self.root_inserir, text='Insira a cidade do usuário:', bg='grey').place(x=0.0, y=65)
         self.ist_city = tk.Entry(self.root_inserir)
-        self.ist_city.pack(pady=5)
+        self.ist_city.place(x=180, y=65)
 
-        tk.Label(self.root_inserir, text='Insira a profissão do usuário:').place(x=0.0, y=95)
+        tk.Label(self.root_inserir, text='Insira a profissão do usuário:', bg='grey').place(x=0.0, y=95)
         self.ist_ocupation = tk.Entry(self.root_inserir)
-        self.ist_ocupation.pack(pady=5)
+        self.ist_ocupation.place(x=180, y=95)
 
         tk.Button(self.root_inserir, text='ENVIAR', command=self.save_new_user).place(x=250, y=130)
         
@@ -118,33 +157,16 @@ class Connection():
     def screen(self):
         self.root = tk.Tk()
         self.root.title('MRTEC')
-        self.root.geometry('690x620')
+        self.root.geometry('663x470+300+50')
         self.root.config(bg='grey')
         
-        tk.Label(self.root, text='Digite o seu usuário do seu banco de dados:', bg='grey').place(x=20, y=6)
-        self.user = tk.Entry(self.root)
-        self.user.pack(pady=5)
-
-        tk.Label(self.root, text='Digite a senha do seu banco de dados:', bg='grey').place(x=20, y=35) 
-        self.password = tk.Entry(self.root)
-        self.password.pack(pady=5)
-
-        tk.Label(self.root, text='Digite o host do seu banco de dados:', bg='grey').place(x=20, y=65)
-        self.host = tk.Entry(self.root)
-        self.host.pack(pady=5)
-
-        tk.Label(self.root, text='Digite qual banco de dados vai utilizar:', bg='grey').place(x=20, y=95)
-        self.database = tk.Entry(self.root)
-        self.database.pack(pady=5)
-        
-        tk.Button(self.root, text='MOSTRAR BANCO', command=self.show_dataframe).place(x=23, y=130)
-        tk.Button(self.root, text='ENVIAR', command=self.insert_data).place(x=348, y=130)
-        tk.Button(self.root, text='ENCERRAR', command=self.shutdown).place(x=275, y=130)
-        tk.Button(self.root, text='INSERIR NOVO CLIENTE', command=self.inserir).place(x=135, y=130)
-        tk.Button(self.root, text='LIMPAR DADOS', command=self.clear_screen_db).place(x=403, y=130)
+        tk.Button(self.root, text='MOSTRAR BANCO', command=self.show_dataframe).place(x=110, y=420)
+        tk.Button(self.root, text='ENCERRAR', command=self.shutdown).place(x=587, y=420)
+        tk.Button(self.root, text='INSERIR NOVO CLIENTE', command=self.insert_new_user_screnn).place(x=447, y=420)
+        tk.Button(self.root, text='LIMPAR DADOS', command=self.clear_screen_db).place(x=10, y=420)
 
         self.p_df = tk.Text(self.root)
-        self.p_df.pack(pady=50)
+        self.p_df.place(x=10, y=10)
 
         self.root.mainloop()
 
